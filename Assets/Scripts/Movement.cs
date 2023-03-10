@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,6 +8,9 @@ using static UnityEngine.InputSystem.InputAction;
 public class Movement : MonoBehaviour
 {
     public bool Controllable = true;
+
+    [Space][Header("Weapon")]
+    [SerializeField] public Weapon CurrentWeapon;
 
     [Space][Header("Movement")]
     [SerializeField] private float speed;
@@ -57,4 +61,15 @@ public class Movement : MonoBehaviour
     public void Death(){
         Controllable = false;
     }
+}
+
+public abstract class Weapon
+{
+    public abstract int Ammo { get; set; }
+
+    public TimeSpan LastCast { get; set; }
+    public abstract void Cast();
+
+    public float SecondCastPower = 0;
+    public abstract void SecondCast();
 }
