@@ -10,7 +10,7 @@ public class Movement : MonoBehaviour
     public bool Controllable = true;
 
     [Space][Header("Weapon")]
-    [SerializeField] public Weapon CurrentWeapon;
+    [SerializeReference, SubclassSelector] public Weapon CurrentWeapon;
 
     [Space][Header("Movement")]
     [SerializeField] private float speed;
