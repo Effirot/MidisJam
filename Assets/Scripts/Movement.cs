@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+
 using static UnityEngine.InputSystem.InputAction;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -27,16 +29,6 @@ public class Movement : MonoBehaviour
     Rigidbody2D m_rigidbody;
     Vector2 targetVector = Vector2.zero;
 
-
-    private void Start() {
-        m_rigidbody = GetComponent<Rigidbody2D>();    
-    }
-    private void FixedUpdate() {
-        if(!Controllable) return;
-
-        m_rigidbody.AddForce(new Vector2(targetVector.x, 0) * speed);
-    }
-
     public void Move(CallbackContext call){
         if(!Controllable) return;
 
@@ -58,18 +50,89 @@ public class Movement : MonoBehaviour
         }
     }
 
+    public void Cast(CallbackContext call) {
+        if(call.started) 
+            CurrentWeapon?.InvokeCast();
+    }
+
     public void Death(){
         Controllable = false;
     }
+
+    private void Start() {
+        m_rigidbody = GetComponent<Rigidbody2D>();   
+        CurrentWeapon.player = this;
+    }
+    private void FixedUpdate() {
+        if(!Controllable) return;
+
+        m_rigidbody.AddForce(new Vector2(targetVector.x, 0) * speed);
+    }
 }
 
+[Serializable]
 public abstract class Weapon
 {
-    public abstract int Ammo { get; set; }
+    public abstract int? Ammo { get; }
+    
+    protected Coroutine currentCast;
+    protected Vector2 cursorPoint => Camera.main.ScreenToWorldPoint(Input.mousePosition);
+    public Movement player;
 
-    public TimeSpan LastCast { get; set; }
-    public abstract void Cast();
+
+    public float LastCastTimer { get; set; }
+    protected abstract IEnumerator Cast();
+    public void InvokeCast(){
+        Debug.Log("CastInvoked");
+        
+        if(currentCast == null)
+            currentCast = player.StartCoroutine(Cast());
+    }
 
     public float SecondCastPower = 0;
-    public abstract void SecondCast();
+    public TimeSpan SecondLastCastTimer { get; set; }
+    protected abstract IEnumerator SecondCast();
+}
+
+[Serializable]
+public class SwordWeapon : Weapon{
+    public override int? Ammo => null;
+    [Range(0, 100)]public float attackDistance;
+
+    public UnityEvent<Quaternion> OnSwordSlash = new();
+
+    protected override IEnumerator Cast()
+    {
+        
+        yield return new WaitForSecondsRealtime(0.1f);
+        
+        Vector2 vec = Camera.main.ScreenToWorldPoint(Input.mousePosition) - player.transform.position;
+        var hit = Physics2D.Raycast(
+            player.transform.position, 
+            vec, 
+            attackDistance,
+            (1<<8));
+        
+        OnSwordSlash.Invoke(Quaternion.AngleAxis(Mathf.Atan2(vec.y, vec.x) * Mathf.Rad2Deg, Vector3.forward));
+
+        Debug.Log(hit.transform?.name);
+        if(hit)
+        if(hit.collider.gameObject.TryGetComponent<Entity>(out var component)){
+            if(component.WillDead(100))
+                player.transform.position = component.transform.position;
+            
+            component.Hit(100);
+        }
+
+        LastCastTimer = Time.time;
+
+        yield return new WaitForSecondsRealtime(0.7f);
+
+        currentCast = null;
+    }
+
+    protected override IEnumerator SecondCast()
+    {
+        yield break;
+    }
 }
