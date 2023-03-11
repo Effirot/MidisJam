@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 3064313220099251838}
   - component: {fileID: 3064313220099251781}
   - component: {fileID: 3064313220099251780}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -123,11 +123,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Controllable: 1
+  CurrentWeapon:
+    rid: -2
   speed: 92.7
   jumpForce: 17.3
   secondJumpForce: 14.3
   secondJumpCount: 1
   groundCollider: {fileID: 3064313220099251780}
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
 --- !u!114 &3064313220099251838
 MonoBehaviour:
   m_ObjectHideFlags: 0
