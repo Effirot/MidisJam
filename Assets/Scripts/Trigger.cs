@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Collider2D))]
 public class Trigger : MonoBehaviour
@@ -17,12 +19,18 @@ public class Trigger : MonoBehaviour
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
-        OnEnter.Invoke(other);   
+        if(other.tag == "Player") 
+            OnEnter.Invoke(other);   
     }
 
     private void OnTriggerExit2D(Collider2D other) {
-        OnExit.Invoke(other);   
+        if(other.tag == "Player") 
+            OnExit.Invoke(other);   
     }
 
+
     public void DestroySelf() => GameObject.Destroy(this.gameObject); 
+    
+    public void LoadScene(string name) => SceneManager.LoadScene(name); 
+    public void LoadScene(int index) => SceneManager.LoadScene(index); 
 }

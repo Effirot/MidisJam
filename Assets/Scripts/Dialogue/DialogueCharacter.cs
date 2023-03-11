@@ -11,5 +11,5 @@ using TMPro;
 [CreateAssetMenu(fileName = "DialogueCharacter", menuName = "DialogueSystem/Character", order = 1)]
 public class DialogueCharacter : ScriptableObject {
     public string Name;
-    public Sprite Sprite;
+    public List<Sprite> Sprite;
 }

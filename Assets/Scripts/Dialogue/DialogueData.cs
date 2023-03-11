@@ -19,7 +19,9 @@ public sealed class DialogueData : ScriptableObject
     [System.Serializable]
     public struct Phrase{
         public DialogueCharacter LCharacter;
+        public int LSpriteIndex;
         public DialogueCharacter RCharacter;
+        public int RSpriteIndex;
         
         public SpeakerLR Speaker;
         

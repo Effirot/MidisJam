@@ -9,6 +9,8 @@ using static UnityEngine.InputSystem.InputAction;
 [RequireComponent(typeof(Rigidbody2D))]
 public class Movement : MonoBehaviour
 {
+    public static Movement current;
+
     public bool Controllable = true;
 
     [Space][Header("Weapon")]
@@ -62,6 +64,8 @@ public class Movement : MonoBehaviour
     private void Start() {
         m_rigidbody = GetComponent<Rigidbody2D>();   
         CurrentWeapon.player = this;
+
+        current = this;
     }
     private void FixedUpdate() {
         if(!Controllable) return;

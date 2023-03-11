@@ -27,8 +27,8 @@ public class Dialogue : MonoBehaviour
         CurrentStep++;
 
 
-        LDialogueCharacter.sprite = data[CurrentStep].LCharacter.Sprite;
-        RDialogueCharacter.sprite = data[CurrentStep].RCharacter.Sprite;
+        LDialogueCharacter.sprite = data[CurrentStep].LCharacter.Sprite[data[CurrentStep].LSpriteIndex];
+        RDialogueCharacter.sprite = data[CurrentStep].RCharacter.Sprite[data[CurrentStep].RSpriteIndex];
         
         Text.text = data[CurrentStep].text;
 
@@ -47,8 +47,8 @@ public class Dialogue : MonoBehaviour
             return;
         }
 
-        LDialogueCharacter.sprite = data[StepIndex].LCharacter.Sprite;
-        RDialogueCharacter.sprite = data[StepIndex].RCharacter.Sprite;
+        LDialogueCharacter.sprite = data[StepIndex].LCharacter.Sprite[data[StepIndex].LSpriteIndex];
+        RDialogueCharacter.sprite = data[StepIndex].RCharacter.Sprite[data[StepIndex].RSpriteIndex];
         
         Text.text = data[StepIndex].text;
 
