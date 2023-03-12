@@ -30,6 +30,8 @@ public abstract class Entity : MonoBehaviour {
 
         if(HP <= 0)
             OnDeadEvent.Invoke();
+
+        SessionManager.main.KillStreak++;
             
     }    
 
