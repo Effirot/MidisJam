@@ -12,7 +12,7 @@ public class menu : MonoBehaviour
     }
     public void toGame()
     {
-        SceneManager.LoadScene("test");
+        SceneManager.LoadScene("level 1");
     }
     public void toMenu()
     {
