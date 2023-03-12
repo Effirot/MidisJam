@@ -4,18 +4,12 @@ using System.Collections.Generic;
 using System.Collections;
 using System;
 
-
 [RequireComponent(typeof(LineRenderer))]
 public class EnemyDefault : Entity{
     LineRenderer _lines;
     Coroutine currentRoutine;
 
-    public IEnumerator Aiming(){
-        for(int i=0;i<1000;i++)
-        {
-            yield return new WaitForFixedUpdate();
-        }
-    }
+
 
     protected override void Start()
     {
@@ -28,8 +22,6 @@ public class EnemyDefault : Entity{
         CastAttack();
         base.FixedUpdate();
     }
-
-
 
     public void CastAttack()
     {
@@ -45,8 +37,10 @@ public class EnemyDefault : Entity{
         {
             CurrentWalkState = EntityWalkState.Standing;
             _lines.enabled = true;
+
+            _lines.SetPosition(1, transform.position);
             
-            for(int i=0;i<35;i++){
+            for(int i=0;i<37;i++){
                 yield return new WaitForFixedUpdate();
                 if(Vector3.Distance(transform.position, Movement.current.transform.position) > 7)
                 {
@@ -59,13 +53,13 @@ public class EnemyDefault : Entity{
                 }
                 
                 _lines.SetPosition(0, transform.position);
-                _lines.SetPosition(1, Movement.current.transform.position);
-                 
+                _lines.SetPosition(1, Vector3.MoveTowards(_lines.GetPosition(1), Movement.current.transform.position, 0.7f));    
             }
+            yield return new WaitForSecondsRealtime(0.09f);
             var playerDetect = Physics2D.Raycast(
-                transform.position, 
-                Movement.current.transform.position - transform.position, 
-                Vector3.Distance(transform.position, Movement.current.transform.position),
+                _lines.GetPosition(0), 
+                 _lines.GetPosition(1) - _lines.GetPosition(0), 
+                Vector3.Distance(_lines.GetPosition(0), _lines.GetPosition(1)),
                 LayerMask.GetMask("Player"));
 
 
@@ -73,6 +67,8 @@ public class EnemyDefault : Entity{
             if(playerDetect.collider.TryGetComponent<Movement>(out var component))
             {
                 component.Death();
+                
+
             }
 
             
@@ -81,17 +77,11 @@ public class EnemyDefault : Entity{
             _lines.enabled = false;
 
 
-            yield return new WaitForSecondsRealtime(0.3f);
+            yield return new WaitForSecondsRealtime(0.4f);
             CurrentWalkState = EntityWalkState.ToPlayer;
-            yield return new WaitForSecondsRealtime(1.5f);
+            yield return new WaitForSecondsRealtime(1.2f);
 
             currentRoutine = null;
         }
     }        
-
-
-
-
-
-
 }

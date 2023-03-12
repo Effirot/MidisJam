@@ -17,18 +17,20 @@ public abstract class Entity : MonoBehaviour {
     
     [Space][Header("Raycast origins")]
     [SerializeField] public Transform RRaycastOrigin;
-    bool CheckR => Physics2D.Raycast(RRaycastOrigin.position, Vector3.down, 1);
+    bool CheckR => Physics2D.Raycast(RRaycastOrigin.position, Vector3.down, 1, LayerMask.GetMask("Ground"));
     [SerializeField] public Transform LRaycastOrigin;
-    bool CheckL => Physics2D.Raycast(LRaycastOrigin.position, Vector3.down, 1);
+    bool CheckL => Physics2D.Raycast(LRaycastOrigin.position, Vector3.down, 1, LayerMask.GetMask("Ground"));
 
     protected bool IsPlayerFounded = false;
-    protected Rigidbody2D _rigidbody;
+    public Rigidbody2D _rigidbody;
+    public Collider2D _collider;
 
     public virtual void Hit(int damage){
         HP -= damage;
 
         if(HP <= 0)
             OnDeadEvent.Invoke();
+            
     }    
 
     public virtual bool WillDead(int damage) => HP <= 0;
@@ -61,7 +63,6 @@ public abstract class Entity : MonoBehaviour {
                 {
                     StopAllCoroutines();
                     CurrentWalkState = EntityWalkState.Standing;
-                    _rigidbody.velocity = Vector3.zero;
                     
                     StartCoroutine(RoutineAction(5, ()=>{
                         CurrentWalkState = EntityWalkState.ToRight; 
@@ -75,7 +76,6 @@ public abstract class Entity : MonoBehaviour {
                 {
                     StopAllCoroutines();
                     CurrentWalkState = EntityWalkState.Standing;
-                    _rigidbody.velocity = Vector3.zero;
                     
                     StartCoroutine(RoutineAction(5, ()=>{
                         CurrentWalkState = EntityWalkState.ToLeft; 
@@ -120,6 +120,7 @@ public abstract class Entity : MonoBehaviour {
 
     protected virtual void Start(){
         _rigidbody = GetComponent<Rigidbody2D>();
+        _collider = GetComponent<Collider2D>();
 
         CurrentWalkState = (EntityWalkState)UnityEngine.Random.Range(1, 2);
     }

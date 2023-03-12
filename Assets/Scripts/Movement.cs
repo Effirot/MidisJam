@@ -7,6 +7,7 @@ using UnityEngine.Events;
 using static UnityEngine.InputSystem.InputAction;
 
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Collider2D))]
 public class Movement : MonoBehaviour
 {
     public static Movement current;
@@ -21,7 +22,7 @@ public class Movement : MonoBehaviour
 
     [Space][Header("Jump")]
     [SerializeField][Range(0, 100)] private float jumpForce;
-    [SerializeField][Range(0, 100)] private float secondJumpForce;
+    [SerializeField][Range(0, 100)] public float secondJumpForce;
     [SerializeField][Range(0, 10)] private int secondJumpCount;
     [SerializeField] private Collider2D groundCollider;
     [SerializeField] private UnityEvent OnDeath = new();
@@ -29,7 +30,10 @@ public class Movement : MonoBehaviour
     private bool _isGrounded => groundCollider?.IsTouchingLayers(LayerMask.GetMask("Ground", "TransparentGround")) ?? false;
     
     int _lostJumps = 0;
-    Rigidbody2D m_rigidbody;
+    public Rigidbody2D _rigidbody;
+    public Collider2D _collider;
+
+
     Vector2 targetVector = Vector2.zero;
 
     public void Move(CallbackContext call){
@@ -42,13 +46,13 @@ public class Movement : MonoBehaviour
 
         if(call.started){
             if(_isGrounded){
-                m_rigidbody.AddForce(new(targetVector.x / 2, jumpForce * 100));
+                _rigidbody.AddForce(new(targetVector.x / 2, jumpForce * 100));
                 _lostJumps = 0;
             }
             else if(secondJumpCount - _lostJumps > 0)
             {
                 _lostJumps++;
-                m_rigidbody.AddForce(new(targetVector.x / 2, secondJumpForce * 100));
+                _rigidbody.AddForce(new(targetVector.x / 2, secondJumpForce * 100));
             }
         }
     }
@@ -65,10 +69,21 @@ public class Movement : MonoBehaviour
     public void Death(){
         Controllable = false;
         OnDeath.Invoke();
+
+        _collider.enabled = false;
+        _rigidbody.velocity = Vector3.zero;
+        _rigidbody.drag = 0;
+        _rigidbody.angularDrag = 0;
+        _rigidbody.constraints = RigidbodyConstraints2D.None;
+        _rigidbody.freezeRotation = false;
+        _rigidbody.AddForce((Vector3.up) * 250);
+        GetComponent<CameraTarget>().target = null;
     }
 
     private void Start() {
-        m_rigidbody = GetComponent<Rigidbody2D>();   
+        _rigidbody = GetComponent<Rigidbody2D>();   
+        _collider = GetComponent<Collider2D>();
+
         CurrentWeapon.player = this;
 
         current = this;
@@ -76,7 +91,12 @@ public class Movement : MonoBehaviour
     private void FixedUpdate() {
         if(!Controllable) return;
 
-        m_rigidbody.AddForce(new Vector2(targetVector.x, 0) * speed);
+        _rigidbody.AddForce(new Vector2(targetVector.x, 0) * speed);
+    }
+
+    private void OnTriggerEnter2D(Collider2D other) {
+        if(other.gameObject.layer == LayerMask.GetMask("Entity"))
+            _rigidbody.AddForce(new(0,secondJumpForce));
     }
 }
 
@@ -139,19 +159,41 @@ public class SwordWeapon : Weapon{
         OnSwordSlash.Invoke(Quaternion.AngleAxis(Mathf.Atan2(vec.y, vec.x) * Mathf.Rad2Deg, Vector3.forward));
 
         if(hit)
-        if(hit.collider.gameObject.TryGetComponent<Entity>(out var component)){
+        if(hit.collider.gameObject.TryGetComponent<Entity>(out var component))
+        {
             if(component.WillDead(100)){
-                player.transform.position = component.transform.position;
                 component.Hit(100);
+                player.transform.position = component.transform.position;
+                player._rigidbody.velocity = Vector3.zero;
+                player._rigidbody.AddForce(Vector3.up * player.secondJumpForce * 90);
                 
+                component.StartCoroutine(AwaitDestroy(component.gameObject));
+                component._collider.enabled = false;
+
+                component._rigidbody.drag = 0;
+                component._rigidbody.angularDrag = 0;
+                component._rigidbody.freezeRotation = false;
+                component._rigidbody.constraints = RigidbodyConstraints2D.None;
+                
+                component._rigidbody.velocity = Vector3.zero;
+                component._rigidbody.angularVelocity = 40;
+
+                component._rigidbody.AddForceAtPosition((vec + Vector2.up) * 250, hit.point);
+                
+
                 yield break;
             }
 
             component.Hit(100);
+            
         }
 
         yield return new WaitForSecondsRealtime(3f);
 
+        IEnumerator AwaitDestroy(UnityEngine.Object component){
+            yield return new WaitForSecondsRealtime(10);
+            UnityEngine.Object.Destroy(component);
+        }
     }
 
     protected override IEnumerator SecondCast()
