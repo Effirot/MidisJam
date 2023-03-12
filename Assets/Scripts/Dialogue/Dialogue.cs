@@ -60,6 +60,11 @@ public class Dialogue : MonoBehaviour
         }
     }
 
+    public void resetCurrentStep()
+    {
+        CurrentStep = 0;
+    }
+
     private void OnEnable() => NextStep(0);
     
 
