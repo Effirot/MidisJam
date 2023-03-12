@@ -9,7 +9,7 @@ using TMPro;
 
 public class Dialogue : MonoBehaviour
 {
-    public DialogueData data;
+    [field: SerializeField]public DialogueData data { get; set; }
     public int CurrentStep = 0;
 
     [SerializeField] Image LDialogueCharacter;
