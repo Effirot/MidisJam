@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AllPhrases:
   - LCharacter: {fileID: 11400000, guid: 3770296b62884d14da86e4b2dfaf4253, type: 2}
-    LSpriteIndex: 3
+    LSpriteIndex: 2
     RCharacter: {fileID: 11400000, guid: f13e60e2676bde647aa266a1b065ad35, type: 2}
     RSpriteIndex: 1
     Speaker: 0
