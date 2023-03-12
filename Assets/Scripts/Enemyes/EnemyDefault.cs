@@ -54,9 +54,9 @@ public class EnemyDefault : Entity{
                 }
                 
                 _lines.SetPosition(0, Vector3.zero);
-                _lines.SetPosition(1, Vector3.MoveTowards(_lines.GetPosition(1), Movement.current.transform.position - transform.position, 0.7f));    
+                _lines.SetPosition(1, Vector3.MoveTowards(_lines.GetPosition(1), Movement.current.transform.position - transform.position, 0.4f));    
             }
-            yield return new WaitForSecondsRealtime(0.09f);
+            yield return new WaitForSecondsRealtime(0.9f);
             var playerDetect = Physics2D.Raycast(
                 transform.position, 
                 _lines.GetPosition(1), 

@@ -41,7 +41,7 @@ public class EnemyArmored : Entity{
             _lines.positionCount = 0;
 
             
-            for(int i=0;i<120;i++){
+            for(int i=0;i<60;i++){
                 yield return new WaitForFixedUpdate();
                 if( Vector3.Distance(transform.position, Movement.current.transform.position) > AttackRange || 
                     Physics2D.Raycast(transform.position, Movement.current.transform.position - transform.position, AttackRange, LayerMask.GetMask("Player", "Ground")).collider.gameObject != Movement.current.gameObject)

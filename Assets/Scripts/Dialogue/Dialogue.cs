@@ -21,6 +21,7 @@ public class Dialogue : MonoBehaviour
     public void NextStep() {
         if(CurrentStep >= data.Length - 1) {
             OnDialogueEnd.Invoke();
+            Time.timeScale = 1;
             return;
         }
         
@@ -44,6 +45,8 @@ public class Dialogue : MonoBehaviour
     public void NextStep(int StepIndex) {
         if(CurrentStep >= data.Length) {
             OnDialogueEnd.Invoke();
+            Time.timeScale = 1;
+
             return;
         }
 
@@ -65,7 +68,11 @@ public class Dialogue : MonoBehaviour
         CurrentStep = 0;
     }
 
-    private void OnEnable() => NextStep(0);
+    private void OnEnable() { 
+        NextStep(0);
+    
+        Time.timeScale = 0;
+    }
     
 
 }
