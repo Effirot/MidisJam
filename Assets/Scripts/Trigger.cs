@@ -33,4 +33,5 @@ public class Trigger : MonoBehaviour
     
     public void LoadScene(string name) => SceneManager.LoadScene(name); 
     public void LoadScene(int index) => SceneManager.LoadScene(index); 
+    public void ReLoadScene() => SceneManager.LoadScene(SceneManager.GetActiveScene().name); 
 }

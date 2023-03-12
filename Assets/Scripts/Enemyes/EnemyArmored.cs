@@ -7,7 +7,9 @@ using System;
 [RequireComponent(typeof(LineRenderer))]
 public class EnemyArmored : Entity{
     LineRenderer _lines;
-    Coroutine currentRoutine;
+    Coroutine currentRoutine = null;
+
+    public float AttackRange = 11;
 
 
     protected override void Start()
@@ -24,51 +26,52 @@ public class EnemyArmored : Entity{
 
     public void CastAttack()
     {
-        if(currentRoutine == null && Vector3.Distance(transform.position, Movement.current.transform.position) <= 7)
+        if(currentRoutine == null && Vector3.Distance(transform.position, Movement.current.transform.position) <= AttackRange - 4)
         {
             StopAllCoroutines();
             currentRoutine = StartCoroutine(Attack());
-
-            Debug.Log("Detected!! Attack him!!!");
         }
 
         IEnumerator Attack()
         {
             CurrentWalkState = EntityWalkState.Standing;
             _lines.enabled = true;
+            _lines.positionCount = 0;
 
-            _lines.SetPosition(1, transform.position);
             
-            for(int i=0;i<37;i++){
+            for(int i=0;i<120;i++){
                 yield return new WaitForFixedUpdate();
-                if(Vector3.Distance(transform.position, Movement.current.transform.position) > 7)
+                if(Vector3.Distance(transform.position, Movement.current.transform.position) > AttackRange)
+                    break;
+                
+                if(i % 4 == 0){
+                    _lines.positionCount += 2;
+                    _lines.SetPosition(_lines.positionCount - 2, transform.position);
+                    _lines.SetPosition(_lines.positionCount - 1, Vector3.MoveTowards(_lines.GetPosition(1), Movement.current.transform.position, 0.7f));
+                }    
+            }
+            yield return new WaitForSecondsRealtime(0.15f);
+
+
+            for(int i = (_lines.positionCount / 2) - 1; i >= 0; i--){
+                yield return new WaitForSecondsRealtime(0.04f);
+                
+                var playerDetect = Physics2D.Raycast(
+                    _lines.GetPosition(i), 
+                    _lines.GetPosition(i-1) - _lines.GetPosition(i), 
+                    Vector3.Distance(_lines.GetPosition(i), _lines.GetPosition(i-1)),
+                    LayerMask.GetMask("Player"));
+
+
+                if(playerDetect)
+                if(playerDetect.collider.TryGetComponent<Movement>(out var component))
                 {
-                    CurrentWalkState = EntityWalkState.ToPlayer;
-                    _lines.enabled = false;
-                    
-                    currentRoutine = null;
-
-                    yield break;
+                    component.Death();
                 }
-                
-                _lines.SetPosition(0, transform.position);
-                _lines.SetPosition(1, Vector3.MoveTowards(_lines.GetPosition(1), Movement.current.transform.position, 0.7f));    
+
+                _lines.positionCount -= 2;
             }
-            yield return new WaitForSecondsRealtime(0.09f);
-            var playerDetect = Physics2D.Raycast(
-                _lines.GetPosition(0), 
-                 _lines.GetPosition(1) - _lines.GetPosition(0), 
-                Vector3.Distance(_lines.GetPosition(0), _lines.GetPosition(1)),
-                LayerMask.GetMask("Player"));
 
-
-            if(playerDetect)
-            if(playerDetect.collider.TryGetComponent<Movement>(out var component))
-            {
-                component.Death();
-                
-
-            }
 
             
             yield return new WaitForSecondsRealtime(0.3f);

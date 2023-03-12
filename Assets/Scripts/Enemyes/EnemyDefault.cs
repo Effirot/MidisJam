@@ -7,9 +7,9 @@ using System;
 [RequireComponent(typeof(LineRenderer))]
 public class EnemyDefault : Entity{
     LineRenderer _lines;
-    Coroutine currentRoutine;
+    Coroutine currentRoutine = null;
 
-
+    public float AttackRange = 8;
 
     protected override void Start()
     {
@@ -29,8 +29,6 @@ public class EnemyDefault : Entity{
         {
             StopAllCoroutines();
             currentRoutine = StartCoroutine(Attack());
-
-            Debug.Log("Detected!! Attack him!!!");
         }
 
         IEnumerator Attack()
@@ -42,7 +40,7 @@ public class EnemyDefault : Entity{
             
             for(int i=0;i<37;i++){
                 yield return new WaitForFixedUpdate();
-                if(Vector3.Distance(transform.position, Movement.current.transform.position) > 7)
+                if(Vector3.Distance(transform.position, Movement.current.transform.position) > AttackRange)
                 {
                     CurrentWalkState = EntityWalkState.ToPlayer;
                     _lines.enabled = false;

@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 5314465781843064645}
   m_Layer: 6
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -132,6 +132,11 @@ MonoBehaviour:
   secondJumpForce: 14.3
   secondJumpCount: 1
   groundCollider: {fileID: 3064313220099251780}
+  OnDeath:
+    m_PersistentCalls:
+      m_Calls: []
+  _rigidbody: {fileID: 0}
+  _collider: {fileID: 0}
   references:
     version: 2
     RefIds:
