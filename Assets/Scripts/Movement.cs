@@ -11,7 +11,7 @@ public class Movement : MonoBehaviour
 {
     public static Movement current;
 
-    public bool Controllable = true;
+    [field: SerializeField] public bool Controllable { get; set; } = true;
 
     [Space][Header("Weapon")]
     [SerializeReference, SubclassSelector] public Weapon CurrentWeapon;
@@ -24,6 +24,7 @@ public class Movement : MonoBehaviour
     [SerializeField][Range(0, 100)] private float secondJumpForce;
     [SerializeField][Range(0, 10)] private int secondJumpCount;
     [SerializeField] private Collider2D groundCollider;
+    [SerializeField] private UnityEvent OnDeath = new();
 
     private bool _isGrounded => groundCollider?.IsTouchingLayers(LayerMask.GetMask("Ground", "TransparentGround")) ?? false;
     
@@ -53,12 +54,17 @@ public class Movement : MonoBehaviour
     }
 
     public void Cast(CallbackContext call) {
-        if(call.started) 
+        if(call.started && Controllable) 
             CurrentWeapon?.InvokeCast();
+    }
+    public void SecondCast(CallbackContext call) {
+        if(call.started && Controllable) 
+            CurrentWeapon?.InvokeSecondCast();
     }
 
     public void Death(){
         Controllable = false;
+        OnDeath.Invoke();
     }
 
     private void Start() {
@@ -84,18 +90,30 @@ public abstract class Weapon
     public Movement player;
 
 
-    public float LastCastTimer { get; set; }
     protected abstract IEnumerator Cast();
     public void InvokeCast(){
-        Debug.Log("CastInvoked");
         
         if(currentCast == null)
-            currentCast = player.StartCoroutine(Cast());
+            currentCast = player.StartCoroutine(Reset());
+    
+        IEnumerator Reset(){
+            yield return Cast();
+            currentCast = null;
+        }
     }
 
-    public float SecondCastPower = 0;
-    public TimeSpan SecondLastCastTimer { get; set; }
     protected abstract IEnumerator SecondCast();
+    public void InvokeSecondCast(){
+        
+        if(currentCast == null)
+            currentCast = player.StartCoroutine(Reset());
+    
+        IEnumerator Reset(){
+            yield return SecondCast();
+            currentCast = null;
+        }
+    }
+
 }
 
 [Serializable]
@@ -107,8 +125,9 @@ public class SwordWeapon : Weapon{
 
     protected override IEnumerator Cast()
     {
-        
+        player.Controllable = false;
         yield return new WaitForSecondsRealtime(0.1f);
+        player.Controllable = true;
         
         Vector2 vec = Camera.main.ScreenToWorldPoint(Input.mousePosition) - player.transform.position;
         var hit = Physics2D.Raycast(
@@ -119,20 +138,20 @@ public class SwordWeapon : Weapon{
         
         OnSwordSlash.Invoke(Quaternion.AngleAxis(Mathf.Atan2(vec.y, vec.x) * Mathf.Rad2Deg, Vector3.forward));
 
-        Debug.Log(hit.transform?.name);
         if(hit)
         if(hit.collider.gameObject.TryGetComponent<Entity>(out var component)){
-            if(component.WillDead(100))
+            if(component.WillDead(100)){
                 player.transform.position = component.transform.position;
-            
+                component.Hit(100);
+                
+                yield break;
+            }
+
             component.Hit(100);
         }
 
-        LastCastTimer = Time.time;
+        yield return new WaitForSecondsRealtime(3f);
 
-        yield return new WaitForSecondsRealtime(0.7f);
-
-        currentCast = null;
     }
 
     protected override IEnumerator SecondCast()
