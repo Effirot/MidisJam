@@ -25,7 +25,9 @@ public class EnemyDefault : Entity{
 
     public void CastAttack()
     {
-        if(currentRoutine == null && Vector3.Distance(transform.position, Movement.current.transform.position) <= 7)
+        if( currentRoutine == null && 
+            Vector3.Distance(transform.position, Movement.current.transform.position) <= AttackRange && 
+            Physics2D.Raycast(transform.position, Movement.current.transform.position - transform.position, AttackRange, LayerMask.GetMask("Player", "Ground")).collider.gameObject == Movement.current.gameObject)
         {
             StopAllCoroutines();
             currentRoutine = StartCoroutine(Attack());
@@ -36,11 +38,12 @@ public class EnemyDefault : Entity{
             CurrentWalkState = EntityWalkState.Standing;
             _lines.enabled = true;
 
-            _lines.SetPosition(1, transform.position);
+            _lines.SetPosition(1, Vector3.zero);
             
             for(int i=0;i<37;i++){
                 yield return new WaitForFixedUpdate();
-                if(Vector3.Distance(transform.position, Movement.current.transform.position) > AttackRange)
+                if(Vector3.Distance(transform.position, Movement.current.transform.position) > AttackRange ||
+                    Physics2D.Raycast(transform.position, Movement.current.transform.position - transform.position, AttackRange, LayerMask.GetMask("Player", "Ground")).collider.gameObject != Movement.current.gameObject)
                 {
                     CurrentWalkState = EntityWalkState.ToPlayer;
                     _lines.enabled = false;
@@ -50,13 +53,13 @@ public class EnemyDefault : Entity{
                     yield break;
                 }
                 
-                _lines.SetPosition(0, transform.position);
-                _lines.SetPosition(1, Vector3.MoveTowards(_lines.GetPosition(1), Movement.current.transform.position, 0.7f));    
+                _lines.SetPosition(0, Vector3.zero);
+                _lines.SetPosition(1, Vector3.MoveTowards(_lines.GetPosition(1), Movement.current.transform.position - transform.position, 0.7f));    
             }
             yield return new WaitForSecondsRealtime(0.09f);
             var playerDetect = Physics2D.Raycast(
-                _lines.GetPosition(0), 
-                 _lines.GetPosition(1) - _lines.GetPosition(0), 
+                transform.position, 
+                _lines.GetPosition(1), 
                 Vector3.Distance(_lines.GetPosition(0), _lines.GetPosition(1)),
                 LayerMask.GetMask("Player"));
 

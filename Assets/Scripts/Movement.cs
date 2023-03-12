@@ -154,7 +154,7 @@ public class SwordWeapon : Weapon{
             player.transform.position, 
             vec, 
             attackDistance,
-            (1<<8));
+            LayerMask.GetMask("Entity", "Ground"));
         
         OnSwordSlash.Invoke(Quaternion.AngleAxis(Mathf.Atan2(vec.y, vec.x) * Mathf.Rad2Deg, Vector3.forward));
 
