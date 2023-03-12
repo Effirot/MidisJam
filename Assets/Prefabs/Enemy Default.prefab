@@ -208,6 +208,8 @@ MonoBehaviour:
   RRaycastOrigin: {fileID: 1444665139199437316}
   LRaycastOrigin: {fileID: 7650189761137063685}
   _rigidbody: {fileID: 5013087438882958642}
+  _collider: {fileID: 0}
+  AttackRange: 8
 --- !u!61 &8209398446403111116
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -352,7 +354,7 @@ LineRenderer:
     textureMode: 0
     shadowBias: 0.5
     generateLightingData: 0
-  m_UseWorldSpace: 1
+  m_UseWorldSpace: 0
   m_Loop: 0
 --- !u!1 &7438043650811654706
 GameObject:

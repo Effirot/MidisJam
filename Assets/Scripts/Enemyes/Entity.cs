@@ -17,9 +17,9 @@ public abstract class Entity : MonoBehaviour {
     
     [Space][Header("Raycast origins")]
     [SerializeField] public Transform RRaycastOrigin;
-    bool CheckR => Physics2D.Raycast(RRaycastOrigin.position, Vector3.down, 1, LayerMask.GetMask("Ground"));
+    bool CheckR => Physics2D.Raycast(RRaycastOrigin.position, Vector3.down, 1, LayerMask.GetMask("Ground", "TransparentGround"));
     [SerializeField] public Transform LRaycastOrigin;
-    bool CheckL => Physics2D.Raycast(LRaycastOrigin.position, Vector3.down, 1, LayerMask.GetMask("Ground"));
+    bool CheckL => Physics2D.Raycast(LRaycastOrigin.position, Vector3.down, 1, LayerMask.GetMask("Ground", "TransparentGround"));
 
     protected bool IsPlayerFounded = false;
     public Rigidbody2D _rigidbody;
