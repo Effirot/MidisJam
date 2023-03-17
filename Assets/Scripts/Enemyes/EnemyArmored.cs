@@ -27,8 +27,8 @@ public class EnemyArmored : Entity{
     public void CastAttack()
     {
         if( currentRoutine == null && 
-            Vector3.Distance(transform.position, Movement.current.transform.position) <= AttackRange - 4 &&
-            Physics2D.Raycast(transform.position, Movement.current.transform.position - transform.position, AttackRange - 4, LayerMask.GetMask("Player", "Ground")).collider.gameObject == Movement.current.gameObject)
+            Vector3.Distance(transform.position, PlayerController.current.transform.position) <= AttackRange - 4 &&
+            Physics2D.Raycast(transform.position, PlayerController.current.transform.position - transform.position, AttackRange - 4, LayerMask.GetMask("Player", "Ground")).collider.gameObject == PlayerController.current.gameObject)
         {
             StopAllCoroutines();
             currentRoutine = StartCoroutine(Attack());
@@ -43,12 +43,12 @@ public class EnemyArmored : Entity{
             
             for(int i=0;i<60;i++){
                 yield return new WaitForFixedUpdate();
-                if( Vector3.Distance(transform.position, Movement.current.transform.position) > AttackRange || 
-                    Physics2D.Raycast(transform.position, Movement.current.transform.position - transform.position, AttackRange, LayerMask.GetMask("Player", "Ground")).collider.gameObject != Movement.current.gameObject)
+                if( Vector3.Distance(transform.position, PlayerController.current.transform.position) > AttackRange || 
+                    Physics2D.Raycast(transform.position, PlayerController.current.transform.position - transform.position, AttackRange, LayerMask.GetMask("Player", "Ground")).collider.gameObject != PlayerController.current.gameObject)
                     break;
                 
                 if(i % 2 == 0){
-                    Vector2 Vec = Movement.current.transform.position - transform.position;
+                    Vector2 Vec = PlayerController.current.transform.position - transform.position;
                     Vector2 Vec_0 = Vec / Mathf.Sqrt(Mathf.Abs(Vec.x) + Mathf.Abs(Vec.y));
 
                     _lines.positionCount += 2;
@@ -56,7 +56,7 @@ public class EnemyArmored : Entity{
                     
                     var ray = Physics2D.Raycast(
                         transform.position, 
-                        Movement.current.transform.position - transform.position, AttackRange, 
+                        PlayerController.current.transform.position - transform.position, AttackRange, 
                         LayerMask.GetMask("Ground"));
                     if(ray)
                         _lines.SetPosition(_lines.positionCount - 1, ray.point);
@@ -78,7 +78,7 @@ public class EnemyArmored : Entity{
 
 
                 if(playerDetect)
-                if(playerDetect.collider.TryGetComponent<Movement>(out var component))
+                if(playerDetect.collider.TryGetComponent<PlayerController>(out var component))
                 {
                     component.Death();
                 }

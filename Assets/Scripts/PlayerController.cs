@@ -6,25 +6,49 @@ using UnityEngine.Events;
 
 using static UnityEngine.InputSystem.InputAction;
 
+
+[Flags]
+public enum InputTargets{
+    Attack1, Attack2, Attack3, Attack4, Attack5,
+    
+    MoveLeft, MoveRight,
+    DownPressed,
+    Grounded, NonGrounded,
+}
+
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Collider2D))]
-public class Movement : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
-    public static Movement current;
+    public static PlayerController current;
 
     [field: SerializeField] public bool Controllable { get; set; } = true;
 
     [Space][Header("Weapon")]
+    [SerializeField] public int CooldownFrames = 0;
     [SerializeReference, SubclassSelector] public Weapon CurrentWeapon;
 
     [Space][Header("Movement")]
-    [SerializeField] private float speed;
+    [SerializeField] private float Speed;
+    [SerializeField] private float RunSpeed;
+    [SerializeField] private float StartRunTimer;
 
     [Space][Header("Jump")]
-    [SerializeField][Range(0, 100)] private float jumpForce;
-    [SerializeField][Range(0, 100)] public float secondJumpForce;
-    [SerializeField][Range(0, 10)] private int secondJumpCount;
+    [SerializeField][Range(0, 100)] private float JumpForce;
+    [SerializeField][Range(0, 100)] public float SecondJumpForce;
+    [SerializeField][Range(0, 10)] private int SecondJumpsCount;
+    
     [SerializeField] private Collider2D groundCollider;
+
+    [Space][Header("Events")]
+    [SerializeField] private UnityEvent OnStartMoving = new();
+    [SerializeField] private UnityEvent OnStartRunning = new();
+    [SerializeField] private UnityEvent OnStopMoving = new();
+
+    [SerializeField] private UnityEvent OnAttack = new();
+    [SerializeField] private UnityEvent OnAttackReset = new();
+
+    [SerializeField] private UnityEvent OnStart = new();
     [SerializeField] private UnityEvent OnDeath = new();
 
     private bool _isGrounded => groundCollider?.IsTouchingLayers(LayerMask.GetMask("Ground", "TransparentGround")) ?? false;
@@ -46,15 +70,19 @@ public class Movement : MonoBehaviour
 
         if(call.started){
             if(_isGrounded){
-                _rigidbody.AddForce(new(targetVector.x / 2, jumpForce * 100));
+                _rigidbody.AddForce(new(targetVector.x / 2, JumpForce * 100));
                 _lostJumps = 0;
             }
-            else if(secondJumpCount - _lostJumps > 0)
-            {
-                _lostJumps++;
-                _rigidbody.AddForce(new(targetVector.x / 2, secondJumpForce * 100));
-            }
+            else if(SecondJumpsCount - _lostJumps > 0)
+                {
+                    _lostJumps++;
+                    _rigidbody.velocity /= 2;
+                    _rigidbody.AddForce(new(0, SecondJumpForce * 100));
+                }
         }
+    }
+    public void SecondJump(){
+        _rigidbody.AddForce(new(0, SecondJumpForce * 100));
     }
 
     public void Cast(CallbackContext call) {
@@ -65,6 +93,7 @@ public class Movement : MonoBehaviour
         if(call.started && Controllable) 
             CurrentWeapon?.InvokeSecondCast();
     }
+    public void SetCooldown(int frames) => CooldownFrames = frames;
 
     public void Death(){
         Controllable = false;
@@ -80,6 +109,7 @@ public class Movement : MonoBehaviour
         GetComponent<CameraTarget>().target = null;
     }
 
+
     private void Start() {
         _rigidbody = GetComponent<Rigidbody2D>();   
         _collider = GetComponent<Collider2D>();
@@ -91,12 +121,23 @@ public class Movement : MonoBehaviour
     private void FixedUpdate() {
         if(!Controllable) return;
 
-        _rigidbody.AddForce(new Vector2(targetVector.x, 0) * speed);
+        _rigidbody.AddForce(new Vector2(targetVector.x, 0) * RunSpeed);
+
+        if(CooldownFrames > 0)
+            CooldownFrames--;
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
         if(other.gameObject.layer == LayerMask.GetMask("Entity"))
-            _rigidbody.AddForce(new(0,secondJumpForce));
+            _rigidbody.AddForce(new(0,SecondJumpForce));
+    }
+
+    private void OnDrawGizmosSelected() {
+    
+        foreach(var collider in CurrentWeapon?.HitArray){
+            Gizmos.color = Color.yellow;
+            collider?.OnEditorGUI(transform.position);
+        }
     }
 }
 
@@ -107,8 +148,9 @@ public abstract class Weapon
     
     protected Coroutine currentCast;
     protected Vector2 cursorPoint => Camera.main.ScreenToWorldPoint(Input.mousePosition);
-    public Movement player;
+    public PlayerController player;
 
+    public Attack[] HitArray;
 
     protected abstract IEnumerator Cast();
     public void InvokeCast(){
@@ -165,7 +207,7 @@ public class SwordWeapon : Weapon{
                 component.Hit(100);
                 player.transform.position = component.transform.position;
                 player._rigidbody.velocity = Vector3.zero;
-                player._rigidbody.AddForce(Vector3.up * player.secondJumpForce * 90);
+                player._rigidbody.AddForce(Vector3.up * player.SecondJumpForce * 90);
                 
                 component.StartCoroutine(AwaitDestroy(component.gameObject));
                 component._collider.enabled = false;

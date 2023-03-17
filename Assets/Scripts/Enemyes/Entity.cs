@@ -87,8 +87,8 @@ public abstract class Entity : MonoBehaviour {
             return;
             case EntityWalkState.ToPlayer: 
                 
-                Vector3 LTarget = new Vector3(Math.Clamp((Movement.current.transform.position - transform.position).x*10, -1, 0),0,0);
-                Vector3 RTarget = new Vector3(Math.Clamp((Movement.current.transform.position - transform.position).x*10, 0, 1),0,0);
+                Vector3 LTarget = new Vector3(Math.Clamp((PlayerController.current.transform.position - transform.position).x*10, -1, 0),0,0);
+                Vector3 RTarget = new Vector3(Math.Clamp((PlayerController.current.transform.position - transform.position).x*10, 0, 1),0,0);
                 
                 if(CheckR)
                     _rigidbody.AddForce(RTarget * speed);
