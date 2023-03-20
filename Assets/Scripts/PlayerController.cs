@@ -134,9 +134,14 @@ public class PlayerController : MonoBehaviour
 
     private void OnDrawGizmosSelected() {
     
+        if(CurrentWeapon == null) return;
+
+        CurrentWeapon.player = this;
+
+
         foreach(var collider in CurrentWeapon?.HitArray){
-            Gizmos.color = Color.yellow;
-            collider?.OnEditorGUI(transform.position);
+            collider.Origin = transform;
+            collider?.OnEditorGUI();
         }
     }
 }
@@ -148,9 +153,11 @@ public abstract class Weapon
     
     protected Coroutine currentCast;
     protected Vector2 cursorPoint => Camera.main.ScreenToWorldPoint(Input.mousePosition);
-    public PlayerController player;
+    [NonSerialized]public PlayerController player;
+    
 
     public Attack[] HitArray;
+
 
     protected abstract IEnumerator Cast();
     public void InvokeCast(){
@@ -179,7 +186,7 @@ public abstract class Weapon
 }
 
 [Serializable]
-public class SwordWeapon : Weapon{
+public class KatanaWeapon : Weapon{
     public override int? Ammo => null;
     [Range(0, 100)]public float attackDistance;
 

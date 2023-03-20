@@ -8,7 +8,7 @@ using UnityEngine.Events;
 
 [RequireComponent(typeof(Collider2D))]
 [RequireComponent(typeof(Rigidbody2D))]
-public abstract class Entity : MonoBehaviour {
+public abstract class Entity : MonoBehaviour, IDamageable {
     public int HP { get; private set; }
     public UnityEvent OnDeadEvent = new();
 
@@ -20,6 +20,9 @@ public abstract class Entity : MonoBehaviour {
     bool CheckR => Physics2D.Raycast(RRaycastOrigin.position, Vector3.down, 1, LayerMask.GetMask("Ground", "TransparentGround"));
     [SerializeField] public Transform LRaycastOrigin;
     bool CheckL => Physics2D.Raycast(LRaycastOrigin.position, Vector3.down, 1, LayerMask.GetMask("Ground", "TransparentGround"));
+
+    public Rigidbody2D rb => _rigidbody;
+    public Vector3 position { get => transform.position; set => transform.position = value; }
 
     protected bool IsPlayerFounded = false;
     public Rigidbody2D _rigidbody;
@@ -133,7 +136,10 @@ public abstract class Entity : MonoBehaviour {
         
     }
 
-    
+    public void DamageReaction(Damage type)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 public enum EntityWalkState{
