@@ -241,13 +241,34 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <Controllable>k__BackingField: 1
+  CooldownFrames: 0
   CurrentWeapon:
-    rid: 7074317442429485056
-  speed: 92.7
-  jumpForce: 17.3
-  secondJumpForce: 14.3
-  secondJumpCount: 1
+    a: 31
+  Speed: 40
+  RunSpeed: 52
+  StartRunTimer: 1.1
+  JumpForce: 20
+  SecondJumpForce: 10
+  SecondJumpsCount: 1
   groundCollider: {fileID: 3064313220099251780}
+  OnStartMoving:
+    m_PersistentCalls:
+      m_Calls: []
+  OnStartRunning:
+    m_PersistentCalls:
+      m_Calls: []
+  OnStopMoving:
+    m_PersistentCalls:
+      m_Calls: []
+  OnAttack:
+    m_PersistentCalls:
+      m_Calls: []
+  OnAttackReset:
+    m_PersistentCalls:
+      m_Calls: []
+  OnStart:
+    m_PersistentCalls:
+      m_Calls: []
   OnDeath:
     m_PersistentCalls:
       m_Calls:
@@ -277,41 +298,6 @@ MonoBehaviour:
         m_CallState: 2
   _rigidbody: {fileID: 0}
   _collider: {fileID: 0}
-  references:
-    version: 2
-    RefIds:
-    - rid: 7074317442429485056
-      type: {class: SwordWeapon, ns: , asm: Assembly-CSharp}
-      data:
-        player: {fileID: 3064313220099251777}
-        attackDistance: 10
-        OnSwordSlash:
-          m_PersistentCalls:
-            m_Calls:
-            - m_Target: {fileID: 3765767681340029858}
-              m_TargetAssemblyTypeName: UnityEngine.Transform, UnityEngine
-              m_MethodName: set_rotation
-              m_Mode: 0
-              m_Arguments:
-                m_ObjectArgument: {fileID: 0}
-                m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-                m_IntArgument: 0
-                m_FloatArgument: 0
-                m_StringArgument: 
-                m_BoolArgument: 0
-              m_CallState: 2
-            - m_Target: {fileID: 4741132276012725068}
-              m_TargetAssemblyTypeName: UnityEngine.VFX.VisualEffect, UnityEngine
-              m_MethodName: Play
-              m_Mode: 1
-              m_Arguments:
-                m_ObjectArgument: {fileID: 0}
-                m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-                m_IntArgument: 0
-                m_FloatArgument: 0
-                m_StringArgument: 
-                m_BoolArgument: 0
-              m_CallState: 2
 --- !u!114 &3064313220099251838
 MonoBehaviour:
   m_ObjectHideFlags: 0

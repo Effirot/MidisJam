@@ -7,15 +7,6 @@ using UnityEngine.Events;
 using static UnityEngine.InputSystem.InputAction;
 
 
-[Flags]
-public enum InputTargets{
-    Attack1, Attack2, Attack3, Attack4, Attack5,
-    
-    MoveLeft, MoveRight,
-    DownPressed,
-    Grounded, NonGrounded,
-}
-
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Collider2D))]
 public class PlayerController : MonoBehaviour
@@ -26,7 +17,7 @@ public class PlayerController : MonoBehaviour
 
     [Space][Header("Weapon")]
     [SerializeField] public int CooldownFrames = 0;
-    [SerializeReference, SubclassSelector] public Weapon CurrentWeapon;
+    [SerializeField]public AttackController CurrentWeapon;
 
     [Space][Header("Movement")]
     [SerializeField] private float Speed;
@@ -85,14 +76,6 @@ public class PlayerController : MonoBehaviour
         _rigidbody.AddForce(new(0, SecondJumpForce * 100));
     }
 
-    public void Cast(CallbackContext call) {
-        if(call.started && Controllable) 
-            CurrentWeapon?.InvokeCast();
-    }
-    public void SecondCast(CallbackContext call) {
-        if(call.started && Controllable) 
-            CurrentWeapon?.InvokeSecondCast();
-    }
     public void SetCooldown(int frames) => CooldownFrames = frames;
 
     public void Death(){
@@ -114,8 +97,6 @@ public class PlayerController : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody2D>();   
         _collider = GetComponent<Collider2D>();
 
-        CurrentWeapon.player = this;
-
         current = this;
     }
     private void FixedUpdate() {
@@ -134,119 +115,12 @@ public class PlayerController : MonoBehaviour
 
     private void OnDrawGizmosSelected() {
     
-        if(CurrentWeapon == null) return;
 
-        CurrentWeapon.player = this;
-
-
-        foreach(var collider in CurrentWeapon?.HitArray){
-            collider.Origin = transform;
-            collider?.OnEditorGUI();
-        }
     }
 }
 
-[Serializable]
-public abstract class Weapon
-{
-    public abstract int? Ammo { get; }
-    
-    protected Coroutine currentCast;
-    protected Vector2 cursorPoint => Camera.main.ScreenToWorldPoint(Input.mousePosition);
-    [NonSerialized]public PlayerController player;
-    
 
-    public Attack[] HitArray;
+// [Serializable]
+// public class KatanaWeapon : AttackController{
 
-
-    protected abstract IEnumerator Cast();
-    public void InvokeCast(){
-        
-        if(currentCast == null)
-            currentCast = player.StartCoroutine(Reset());
-    
-        IEnumerator Reset(){
-            yield return Cast();
-            currentCast = null;
-        }
-    }
-
-    protected abstract IEnumerator SecondCast();
-    public void InvokeSecondCast(){
-        
-        if(currentCast == null)
-            currentCast = player.StartCoroutine(Reset());
-    
-        IEnumerator Reset(){
-            yield return SecondCast();
-            currentCast = null;
-        }
-    }
-
-}
-
-[Serializable]
-public class KatanaWeapon : Weapon{
-    public override int? Ammo => null;
-    [Range(0, 100)]public float attackDistance;
-
-    public UnityEvent<Quaternion> OnSwordSlash = new();
-
-    protected override IEnumerator Cast()
-    {
-        player.Controllable = false;
-        yield return new WaitForSecondsRealtime(0.1f);
-        player.Controllable = true;
-        
-        Vector2 vec = Camera.main.ScreenToWorldPoint(Input.mousePosition) - player.transform.position;
-        var hit = Physics2D.Raycast(
-            player.transform.position, 
-            vec, 
-            attackDistance,
-            LayerMask.GetMask("Entity", "Ground"));
-        
-        OnSwordSlash.Invoke(Quaternion.AngleAxis(Mathf.Atan2(vec.y, vec.x) * Mathf.Rad2Deg, Vector3.forward));
-
-        if(hit)
-        if(hit.collider.gameObject.TryGetComponent<Entity>(out var component))
-        {
-            if(component.WillDead(100)){
-                component.Hit(100);
-                player.transform.position = component.transform.position;
-                player._rigidbody.velocity = Vector3.zero;
-                player._rigidbody.AddForce(Vector3.up * player.SecondJumpForce * 90);
-                
-                component.StartCoroutine(AwaitDestroy(component.gameObject));
-                component._collider.enabled = false;
-
-                component._rigidbody.drag = 0;
-                component._rigidbody.angularDrag = 0;
-                component._rigidbody.freezeRotation = false;
-                component._rigidbody.constraints = RigidbodyConstraints2D.None;
-                
-                component._rigidbody.velocity = Vector3.zero;
-                component._rigidbody.angularVelocity = 40;
-
-                component._rigidbody.AddForceAtPosition((vec + Vector2.up) * 250, hit.point);
-                
-
-                yield break;
-            }
-
-            component.Hit(100);
-            
-        }
-
-        yield return new WaitForSecondsRealtime(3f);
-
-        IEnumerator AwaitDestroy(UnityEngine.Object component){
-            yield return new WaitForSecondsRealtime(10);
-            UnityEngine.Object.Destroy(component);
-        }
-    }
-
-    protected override IEnumerator SecondCast()
-    {
-        yield break;
-    }
-}
+// }
