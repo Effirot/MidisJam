@@ -114,8 +114,9 @@ public class PlayerController : MonoBehaviour
     }
 
     private void OnDrawGizmosSelected() {
-    
-
+        if(CurrentWeapon == null)return;
+        CurrentWeapon.transform = transform;
+        CurrentWeapon.AttackGizmos();
     }
 }
 

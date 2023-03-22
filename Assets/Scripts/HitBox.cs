@@ -54,43 +54,51 @@ public enum DamageType{
 
 [Serializable]
 public class AttackController{
-    public AttackController(Transform origin) { this.origin = origin; }
     
-    Transform origin { get; }
+    public Transform transform { get; set; }
     [SerializeField]List<AttackInfo> allHitBoxes = new List<AttackInfo>();
 
-
-
-    
-    [Serializable]
-    class AttackInfo{
-        
-        [SerializeReference, SubclassSelector]public HitBox[] Collider;
-
-        [NonSerialized]public Transform Origin;
-
-        public void Invoke(){ }
-        public void OnEditorGUI(){
-
-            foreach(var collider in Collider)
-            {    
-                if(collider == null) continue;
-
-                collider.origin = Origin;
-
-                if(collider.Invoke(Vector2.zero).Any())
-                    Gizmos.color = Color.red;
-                else Gizmos.color = Color.green;
-
-                collider.OnEditorGUI(Vector2.zero);
-            }
-        }
+    public void AttackGizmos(){
+        foreach(AttackInfo info in allHitBoxes)
+            info?.OnEditorGUI();
     }
-
 }
 
+[Serializable]
+public class AttackInfo{
+    [SerializeReference, SubclassSelector]public HitBox[] Collider;
+    [NonSerialized]public AttackController Origin;
+
+    public Transform transform => Origin.transform;
+
+
+    public void Invoke(){ }
+    public void OnEditorGUI(){
+
+        foreach(var collider in Collider)
+        {    
+            if(collider == null) continue;
+
+            collider.origin = this;
+
+            Gizmos.matrix = Matrix4x4.zero;
+            if(collider.Invoke(Vector2.zero, out var comps))
+            {
+                if(comps.Any())
+                    Gizmos.color = Color.red;
+                else Gizmos.color = Color.yellow;
+            }
+            else Gizmos.color = Color.green;
+
+
+            collider.OnEditorGUI(Vector2.zero);
+        }
+    }
+}
+
+
 #if UNITY_EDITOR
-[CustomPropertyDrawer(typeof(AttackController))]
+[CustomPropertyDrawer(typeof(AttackController), true)]
 public class AttackController_PropertyDrawer : PropertyDrawer{
 
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
@@ -118,19 +126,48 @@ public interface IDamageable{
     void DamageReaction(Damage type);
 }
 
-[Serializable]
-public abstract class HitBox{
-    [NonSerialized]public Transform origin;
-    public LayerMask layer;
-
-
-    public abstract IDamageable[] Invoke(Vector2 InvokePosition); 
-    public abstract void OnEditorGUI(Vector2 InvokePosition);
-}
-
 public static class HitBoxExtends{
     public static Vector2 position2(this Transform a) => a.position;
 }
+
+[Serializable]
+public abstract class HitBox{
+    internal protected AttackInfo origin;
+    public LayerMask layer;
+
+    protected Transform transform => origin.transform;
+
+
+    public abstract bool Invoke(Vector2 InvokePosition, out IDamageable[] targets); 
+    public abstract void OnEditorGUI(Vector2 InvokePosition);
+}
+
+public class BoxAllHitBox : HitBox
+{
+    public Vector2 position;
+    public Vector2 size;
+    public float angle;
+
+    public override bool Invoke(Vector2 InvokePosition, out IDamageable[] targets)
+    {
+        var dam = new List<IDamageable>();
+        var hits = Physics2D.BoxCastAll(transform.position2() + InvokePosition + position, size, angle, InvokePosition + position, Mathf.Infinity, layer, 0, 1);
+
+        foreach(var hit in hits){
+            
+        }
+
+        
+        targets = dam.ToArray();
+        return hits.Any();
+    }
+
+    public override void OnEditorGUI(Vector2 InvokePosition)
+    {
+
+    }
+}
+
 
 
     
