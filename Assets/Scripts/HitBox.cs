@@ -14,8 +14,11 @@ using System.IO;
 [Flags]
 public enum InputTargets{    
     MoveLeft, MoveRight,
-    DownPressed,
-    Grounded, NonGrounded,
+    DownPressed, UpPressed,
+
+    Run, Air, 
+
+    Inverted
 }
 
 
@@ -56,7 +59,8 @@ public enum DamageType{
 public class AttackController{
     
     public Transform transform { get; set; }
-    [SerializeField]List<AttackInfo> allHitBoxes = new List<AttackInfo>();
+    [SerializeField]List<AttackInfo> allHitBoxes = new List<AttackInfo>() { new(), new(), new(), new(), new(), new(), new(), new() };
+
 
     public void AttackGizmos(){
         foreach(AttackInfo info in allHitBoxes)
@@ -65,14 +69,27 @@ public class AttackController{
 }
 
 [Serializable]
-public class AttackInfo{
+public sealed class AttackInfo{
     [SerializeReference, SubclassSelector]public HitBox[] Collider;
     [NonSerialized]public AttackController Origin;
+
+    public string Name;
 
     public Transform transform => Origin.transform;
 
 
-    public void Invoke(){ }
+    public bool Invoke(out IDamageable[] hits){  
+        bool result = false;
+        List<IDamageable> damaged = new();
+
+        foreach(var info in Collider){
+            result = info.Invoke(Vector3.zero, out var damages);
+            damaged.AddRange(damages);
+        }
+
+        hits = damaged.ToArray();
+        return result;
+    }
     public void OnEditorGUI(){
 
         foreach(var collider in Collider)
@@ -98,23 +115,128 @@ public class AttackInfo{
 
 
 #if UNITY_EDITOR
-[CustomPropertyDrawer(typeof(AttackController), true)]
+[CustomPropertyDrawer(typeof(AttackController))]
 public class AttackController_PropertyDrawer : PropertyDrawer{
+
+    int NowEditing = -1;
+    int LinesCount = 0;
+
+    float SpaceSize => EditorGUIUtility.standardVerticalSpacing;
+    float LineSize => EditorGUIUtility.singleLineHeight;
+
+    
+    public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+    {
+        return (LineSize + SpaceSize) * LinesCount - 1;
+    }
+
 
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
         SerializedProperty attackArray = property.FindPropertyRelative("allHitBoxes");
 
+        var attackArr = property.FindPropertyRelative("allHitBoxes"); 
+
 
         EditorGUI.BeginProperty(position, label, property);
         position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
         {
-            var amountRect = new Rect(position.x, position.y, 30, position.height);
-            EditorGUI.LabelField(amountRect, "ass");
+            int lines = 0;
+            property.isExpanded = true; 
+
+            var tableRect = new Rect(position);
+            tableRect.height = LineSize;
+            tableRect.x -= tableRect.width / 2;
+            tableRect.width *= 1.5f;
+            lines += attackArr.arraySize;
+
+            for(int i = 0; i < attackArr.arraySize; i++){
+
+                tableRect.y += LineSize + SpaceSize;
+
+
+                #region Edit button
+                    var rectEditBtn = new Rect(tableRect);
+                    rectEditBtn.width = 45;
+                    
+                    if(GUI.Button(rectEditBtn, "Edit"))
+                        if(NowEditing != i)
+                            NowEditing = i;
+                        else NowEditing = -1;
+                #endregion
+                #region Name field
+                    var rectLabel = new Rect(tableRect);
+                    rectLabel.width = tableRect.width - rectEditBtn.width - SpaceSize - LineSize;
+                    rectLabel.x += rectEditBtn.width + SpaceSize;
+
+                    var name = attackArr.GetArrayElementAtIndex(i).FindPropertyRelative("Name");
+                    name.stringValue = EditorGUI.TextField(rectLabel, name.stringValue);
+                #endregion
+                #region Delete button
+                    var rectDeleteBtn = new Rect(rectLabel);
+                    rectDeleteBtn.width = LineSize;
+                    rectDeleteBtn.x += SpaceSize + rectLabel.width;
+
+                    if(GUI.Button(rectDeleteBtn, "X")){
+                        attackArr.DeleteArrayElementAtIndex(i);
+                        NowEditing = -1;
+                    }
+                #endregion
+
+                if(i == NowEditing)
+                {
+                    tableRect.y += (LineSize + SpaceSize) * 3;
+                    lines += 3;
+                }
+            
+            }
+
+
+            LinesCount = lines;
         }
         EditorGUI.EndProperty();
+
+    }
+    
+
+}
+
+[CustomPropertyDrawer(typeof(Damage))]
+public class Damage_PropertyDrawer : PropertyDrawer{
+
+    float SpaceSize => EditorGUIUtility.standardVerticalSpacing;
+    float LineSize => EditorGUIUtility.singleLineHeight;
+
+    public override float GetPropertyHeight(SerializedProperty property, GUIContent label){
+        return (SpaceSize + LineSize) * 2;
     }
 
+    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+    {
+        var value = property.FindPropertyRelative("Value");
+        var type = property.FindPropertyRelative("Type");
+        var repulsion = property.FindPropertyRelative("Repulsion");
+
+        EditorGUI.BeginProperty(position, label, property);
+
+        var damageRect = new Rect(position);
+        damageRect.height = SpaceSize;
+        damageRect.width /= 2;
+
+        value.floatValue = EditorGUI.FloatField(damageRect, value.floatValue);
+
+
+        damageRect.height += damageRect.width;
+
+        //value.enumValueFlag = EditorGUI.EnumPopup(damageRect, value.enumValueFlag);
+
+        var repulsionRect = new Rect(position);
+        repulsionRect.height /= 2;
+        repulsionRect.x += repulsionRect.height;
+        
+
+        EditorGUI.EndProperty();
+    }
 }
 #endif
 
