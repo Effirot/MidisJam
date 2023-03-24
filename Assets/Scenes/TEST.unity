@@ -277,20 +277,8 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3064313220099251777, guid: 3f14a840244110c4a972919a774cef32, type: 3}
-      propertyPath: CurrentWeapon.allHitBoxes.Array.size
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 3064313220099251777, guid: 3f14a840244110c4a972919a774cef32, type: 3}
-      propertyPath: CurrentWeapon.allHitBoxes.Array.data[0].Name
-      value: a
-      objectReference: {fileID: 0}
-    - target: {fileID: 3064313220099251777, guid: 3f14a840244110c4a972919a774cef32, type: 3}
-      propertyPath: CurrentWeapon.allHitBoxes.Array.data[1].Name
-      value: s
-      objectReference: {fileID: 0}
-    - target: {fileID: 3064313220099251777, guid: 3f14a840244110c4a972919a774cef32, type: 3}
-      propertyPath: CurrentWeapon.allHitBoxes.Array.data[2].Name
-      value: ddddddddddddd
+      propertyPath: CurrentWeapon.groups.Array.size
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3064313220099251777, guid: 3f14a840244110c4a972919a774cef32, type: 3}
       propertyPath: OnDeath.m_PersistentCalls.m_Calls.Array.size

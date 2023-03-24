@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
 
     [Space][Header("Weapon")]
     [SerializeField] public int CooldownFrames = 0;
-    [SerializeField]public AttackController CurrentWeapon;
+    [SerializeField] public AttackController CurrentWeapon;
 
     [Space][Header("Movement")]
     [SerializeField] private float Speed;
@@ -116,7 +116,7 @@ public class PlayerController : MonoBehaviour
     private void OnDrawGizmosSelected() {
         if(CurrentWeapon == null)return;
         CurrentWeapon.transform = transform;
-        CurrentWeapon.AttackGizmos();
+        CurrentWeapon.DrawEditorGUI();
     }
 }
 
