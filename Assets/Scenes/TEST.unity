@@ -278,7 +278,43 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3064313220099251777, guid: 3f14a840244110c4a972919a774cef32, type: 3}
       propertyPath: CurrentWeapon.groups.Array.size
-      value: 5
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 3064313220099251777, guid: 3f14a840244110c4a972919a774cef32, type: 3}
+      propertyPath: CurrentWeapon.groups.Array.data[0].Name
+      value: a
+      objectReference: {fileID: 0}
+    - target: {fileID: 3064313220099251777, guid: 3f14a840244110c4a972919a774cef32, type: 3}
+      propertyPath: CurrentWeapon.groups.Array.data[1].Name
+      value: a
+      objectReference: {fileID: 0}
+    - target: {fileID: 3064313220099251777, guid: 3f14a840244110c4a972919a774cef32, type: 3}
+      propertyPath: CurrentWeapon.groups.Array.data[2].Name
+      value: a
+      objectReference: {fileID: 0}
+    - target: {fileID: 3064313220099251777, guid: 3f14a840244110c4a972919a774cef32, type: 3}
+      propertyPath: CurrentWeapon.groups.Array.data[3].Name
+      value: a
+      objectReference: {fileID: 0}
+    - target: {fileID: 3064313220099251777, guid: 3f14a840244110c4a972919a774cef32, type: 3}
+      propertyPath: CurrentWeapon.groups.Array.data[4].Name
+      value: a
+      objectReference: {fileID: 0}
+    - target: {fileID: 3064313220099251777, guid: 3f14a840244110c4a972919a774cef32, type: 3}
+      propertyPath: CurrentWeapon.groups.Array.data[5].Name
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3064313220099251777, guid: 3f14a840244110c4a972919a774cef32, type: 3}
+      propertyPath: CurrentWeapon.groups.Array.data[6].Name
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3064313220099251777, guid: 3f14a840244110c4a972919a774cef32, type: 3}
+      propertyPath: CurrentWeapon.groups.Array.data[7].Name
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3064313220099251777, guid: 3f14a840244110c4a972919a774cef32, type: 3}
+      propertyPath: CurrentWeapon.groups.Array.data[8].Name
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 3064313220099251777, guid: 3f14a840244110c4a972919a774cef32, type: 3}
       propertyPath: OnDeath.m_PersistentCalls.m_Calls.Array.size
@@ -334,3 +370,20 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3f14a840244110c4a972919a774cef32, type: 3}
+--- !u!1 &1607379523 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3064313220099251839, guid: 3f14a840244110c4a972919a774cef32, type: 3}
+  m_PrefabInstance: {fileID: 1607379522}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1607379524
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1607379523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b48bc392ab98fdf478fd7f36e773e4c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

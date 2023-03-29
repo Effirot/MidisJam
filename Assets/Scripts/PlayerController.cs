@@ -112,12 +112,6 @@ public class PlayerController : MonoBehaviour
         if(other.gameObject.layer == LayerMask.GetMask("Entity"))
             _rigidbody.AddForce(new(0,SecondJumpForce));
     }
-
-    private void OnDrawGizmosSelected() {
-        if(CurrentWeapon == null)return;
-        CurrentWeapon.transform = transform;
-        CurrentWeapon.DrawEditorGUI();
-    }
 }
 
 

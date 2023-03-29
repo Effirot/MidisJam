@@ -1,11 +1,14 @@
 {
-    "name": "AttackSystem",
+    "name": "QuickFightingSystem",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "GUID:e6234d6c1f7bf4e4db20eddc411c00b8",
+        "GUID:49b49c76ee64f6b41bf28ef951cb0e50"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
-    "overrideReferences": false,
+    "overrideReferences": true,
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
