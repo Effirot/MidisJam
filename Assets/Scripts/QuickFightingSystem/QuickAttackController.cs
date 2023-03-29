@@ -12,14 +12,14 @@ using System.Collections.Generic;
     using UnityEditor;
 #endif
 
-public class AttackController : MonoBehaviour{
+
+public class QuickAttackController : MonoBehaviour{
     
     internal List<Attack> groups = new() { 
         new(), 
         new(), 
         new() 
     };
-
 
     /// <summary>
     /// w=2300>Light>w=30>{w=10>Line}x20>Line?[]:[]:[]
@@ -31,17 +31,31 @@ public class AttackController : MonoBehaviour{
     }
     
     IEnumerator<YieldInstruction> _Complete(string command){
-        var commands = Regex.Matches(command, @"\{*(>*.*?>*)\}*[>,;]");
+        var commands = Regex.Split(command, @"\{*(>*.*?>*)\}*[>,;]");
 
         foreach(var c in commands){
-            
+            Debug.LogWarning($"Completing {c}");
+
+            CompleteAttack(c);
         }
+
+
+        void CompleteAttack(string Name){
+            var atk = groups.Find(a=>a.Name == Name);
+            
+            if(atk.Invoke(out var hits))
+                foreach(var item in hits)
+                    item.DamageReaction(atk.damage);
+        }
+
 
         yield break;
     }
 
-    public void Draw() {
-        foreach(var info in groups){
+    public void Draw() 
+    {
+        foreach(var info in groups)
+        {
             if(info == null) continue;
 
             info.Origin = this;
@@ -57,11 +71,11 @@ internal class Attack{
     public LayerMask layer;
     public Damage damage;
 
-    [SerializeReference, SubclassSelector]public List<HitBox> HitBoxes = new() { new BoxAllHitBox() };
+    public List<HitBox> HitBoxes = new() { new BoxAllHitBox() };
     public UnityEvent OnAttackStarted = new();
     public UnityEvent<IDamageable> OnHit = new();
     
-    [NonSerialized]public AttackController Origin;
+    [NonSerialized]public QuickAttackController Origin;
     public Transform transform => Origin.transform;
 
 
@@ -106,43 +120,49 @@ internal class Attack{
 
 #if UNITY_EDITOR
 
-[CustomEditor(typeof(AttackController), true)]
-public class AttackController_Editor : Editor{
+[CustomEditor(typeof(QuickAttackController), true)]
+public class QuickAttackController_Editor : Editor{
     
-    AttackController Target;
+    QuickAttackController t;
     
     Attack NowSerializing;
     string InvokeField;
 
     private void OnEnable() {
-        Target = (AttackController)target;
+        t = (QuickAttackController)target;
     }
 
     public override void OnInspectorGUI() { 
+        
+
         if(Application.isPlaying){
             InvokeField = GUILayout.TextArea(InvokeField);
             
             if(GUILayout.Button(InvokeField))
-                Target.Complete(InvokeField);
+                t.Complete(InvokeField);
         }
 
         if(GUILayout.Button("Add")){
-            Target.groups.Add(new() { Name = "Attack" });   
+            t.groups.Add(new() { Name = "Attack" });   
         }
+        
 
+        List<Attack> attackList = new();
+        EditorGUI.BeginChangeCheck();
+        for(int i = 0; i < t.groups.Count; i++){
+            var atk = t.groups[i];
 
-        foreach(var atk in Target.groups){
             EditorGUILayout.BeginHorizontal();
                 
                 EditorGUILayout.BeginHorizontal();
-                    atk.Name = EditorGUILayout.TextArea(atk.Name ?? string.Empty);
+                    atk.Name = EditorGUILayout.TextField(atk.Name ?? string.Empty);
                 EditorGUILayout.EndHorizontal();
 
                 if(GUILayout.Button("Edit"))
                     if(NowSerializing == atk) NowSerializing = null;
                     else NowSerializing = atk;
-                                   
-                
+                if(GUILayout.Button("Delete"))
+                    t.groups.Remove(atk);
 
             EditorGUILayout.EndHorizontal();
             
@@ -150,6 +170,15 @@ public class AttackController_Editor : Editor{
                 GUILayout.Space(50);
             }
         }
+        attackList = t.groups;
+
+        if (EditorGUI.EndChangeCheck())
+        {
+            Undo.RecordObject(target, "Changed Area Of Effect");
+            t.groups = attackList;
+        }
+
+
     }
 
     private void OnDrawGizmosSelected() {

@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
 
     [Space][Header("Weapon")]
     [SerializeField] public int CooldownFrames = 0;
-    [SerializeField] public AttackController CurrentWeapon;
+    [SerializeField] public QuickAttackController CurrentWeapon;
 
     [Space][Header("Movement")]
     [SerializeField] private float Speed;

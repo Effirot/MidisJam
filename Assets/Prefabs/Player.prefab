@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 3064313220099251781}
   - component: {fileID: 3064313220099251780}
   - component: {fileID: 5314465781843064645}
+  - component: {fileID: 83611399617869695}
   m_Layer: 9
   m_Name: Player
   m_TagString: Player
@@ -242,8 +243,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Controllable>k__BackingField: 1
   CooldownFrames: 0
-  CurrentWeapon:
-    a: 31
+  CurrentWeapon: {fileID: 0}
   Speed: 40
   RunSpeed: 52
   StartRunTimer: 1.1
@@ -475,6 +475,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
+--- !u!114 &83611399617869695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3064313220099251839}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b48bc392ab98fdf478fd7f36e773e4c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6638511682472301313
 GameObject:
   m_ObjectHideFlags: 0

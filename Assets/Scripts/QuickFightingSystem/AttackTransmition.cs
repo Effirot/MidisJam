@@ -14,9 +14,20 @@ public static class HitBoxExtends{
 public interface IDamageable{
     
     Rigidbody2D rb { get; }
-    Vector3 position { get; set; }
+    float HP { get; set; }
+    
+    bool CanDamage(Damage damage);
+    void OnDead(Damage damage);
 
-    void DamageReaction(Damage type);
+    public void DamageReaction(Damage damage) {
+        if(!CanDamage(damage)) return; 
+
+        rb.AddForce(rb.mass * damage.Repulsion);
+        HP -= damage.Value;
+
+        if(HP <= 0)
+            OnDead(damage);
+    }
 }
 
 [Serializable]
@@ -26,20 +37,25 @@ public struct Damage{
     public Vector2 Repulsion;
     public DamageType Type;
 
-    public Damage(float value, DamageType type, Vector2 repulsion){
+    public QuickAttackController Sender;
+
+    public Damage(float value, DamageType type, Vector2 repulsion, QuickAttackController sender){
         Value = value;
         Type = type;
         Repulsion = repulsion;
+        Sender = sender;
     }
-    public Damage(float value, DamageType type = DamageType.Default){
+    public Damage(float value, QuickAttackController sender, DamageType type = DamageType.Default){
         Value = value;
         Type = type;
         Repulsion = Vector2.zero;
+        Sender = sender;
     }
-    public Damage(float value, Vector2 repulsion, DamageType type = DamageType.Default){
+    public Damage(float value, Vector2 repulsion, QuickAttackController sender, DamageType type = DamageType.Default){
         Value = value;
         Type = type;
         Repulsion = repulsion;
+        Sender = sender;
     }
 }
 public enum DamageType{
