@@ -39,7 +39,6 @@ public class QuickAttackController : MonoBehaviour{
             CompleteAttack(c);
         }
 
-
         void CompleteAttack(string Name){
             var atk = groups.Find(a=>a.Name == Name);
             

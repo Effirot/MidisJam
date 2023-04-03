@@ -2,8 +2,8 @@
     "name": "QuickFightingSystem",
     "rootNamespace": "",
     "references": [
-        "GUID:e6234d6c1f7bf4e4db20eddc411c00b8",
-        "GUID:49b49c76ee64f6b41bf28ef951cb0e50"
+        "GUID:b8e24fd1eb19b4226afebb2810e3c19b",
+        "GUID:002c1bbed08fa44d282ef34fd5edb138"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
