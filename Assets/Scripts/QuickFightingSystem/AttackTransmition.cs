@@ -30,12 +30,14 @@ public interface IDamageable{
     }
 }
 
+
 [Serializable]
 public struct Damage{
-    public float Value;
 
-    public Vector2 Repulsion;
-    public DamageType Type;
+    [XNode.Node.Input] public float Value;
+
+    [XNode.Node.Input] public Vector2 Repulsion;
+    [XNode.Node.Input] public DamageType Type;
 
     public QuickAttackController Sender;
 
@@ -69,69 +71,69 @@ public enum DamageType{
 }
 
 #region --- --- HitBox 
-[Serializable]
-internal abstract class HitBox{
-    internal protected Attack origin;
+// [Serializable]
+// internal abstract class HitBox{
+//     internal protected Attack origin;
 
-    public LayerMask layer => origin.layer;
-    protected Transform transform => origin.transform;
+//     public LayerMask layer => origin.layer;
+//     protected Transform transform => origin.transform;
 
 
-    public abstract bool Invoke(Vector2 InvokePosition, out IDamageable[] targets); 
-    public abstract void OnEditorGUI(Vector2 InvokePosition);
-}
+//     public abstract bool Invoke(Vector2 InvokePosition, out IDamageable[] targets); 
+//     public abstract void OnEditorGUI(Vector2 InvokePosition);
+// }
 
-[Serializable]
-internal class BoxAllHitBox : HitBox
-{
-    public Vector2 position;
-    public Vector2 size;
-    public float angle;
+// [Serializable]
+// internal class BoxAllHitBox : HitBox
+// {
+//     public Vector2 position;
+//     public Vector2 size;
+//     public float angle;
 
-    public override bool Invoke(Vector2 InvokePosition, out IDamageable[] targets)
-    {
-        var dam = new List<IDamageable>();
-        var hits = Physics2D.BoxCastAll(transform.position2() + InvokePosition + position, size, angle, InvokePosition + position, Mathf.Infinity, layer, 0, 1);
+//     public override bool Invoke(Vector2 InvokePosition, out IDamageable[] targets)
+//     {
+//         var dam = new List<IDamageable>();
+//         var hits = Physics2D.BoxCastAll(transform.position2() + InvokePosition + position, size, angle, InvokePosition + position, Mathf.Infinity, layer, 0, 1);
 
-        foreach(var hit in hits){
-            if(hit.collider.gameObject.TryGetComponent<IDamageable>(out var component))
-                dam.Add(component);
-        }
+//         foreach(var hit in hits){
+//             if(hit.collider.gameObject.TryGetComponent<IDamageable>(out var component))
+//                 dam.Add(component);
+//         }
         
-        targets = dam.ToArray();
-        return hits.Any();
-    }
+//         targets = dam.ToArray();
+//         return hits.Any();
+//     }
 
-    public override void OnEditorGUI(Vector2 InvokePosition)
-    {
-        Gizmos.matrix = Matrix4x4.TRS(transform.position2() + InvokePosition + position, Quaternion.Euler(new(0,0,angle)), Vector3.one);
-        Gizmos.DrawWireCube(Vector3.zero, size);
-    }
-}
-[Serializable]
-internal class CircleAllHitBox : HitBox
-{
-    public Vector2 position;
-    public float radius;
+//     public override void OnEditorGUI(Vector2 InvokePosition)
+//     {
+//         Gizmos.matrix = Matrix4x4.TRS(transform.position2() + InvokePosition + position, Quaternion.Euler(new(0,0,angle)), Vector3.one);
+//         Gizmos.DrawWireCube(Vector3.zero, size);
+//     }
+// }
+// [Serializable]
+// internal class CircleAllHitBox : HitBox
+// {
+//     public Vector2 position;
+//     public float radius;
 
-    public override bool Invoke(Vector2 InvokePosition, out IDamageable[] targets)
-    {
-        var dam = new List<IDamageable>();
-        var hits = Physics2D.CircleCastAll(transform.position2() + InvokePosition + position, radius, InvokePosition + position, Mathf.Infinity, layer, 0, 1);
+//     public override bool Invoke(Vector2 InvokePosition, out IDamageable[] targets)
+//     {
+//         var dam = new List<IDamageable>();
+//         var hits = Physics2D.CircleCastAll(transform.position2() + InvokePosition + position, radius, InvokePosition + position, Mathf.Infinity, layer, 0, 1);
 
-        foreach(var hit in hits){
-            if(hit.collider.gameObject.TryGetComponent<IDamageable>(out var component))
-                dam.Add(component);
-        }
+//         foreach(var hit in hits){
+//             if(hit.collider.gameObject.TryGetComponent<IDamageable>(out var component))
+//                 dam.Add(component);
+//         }
         
-        targets = dam.ToArray();
-        return hits.Any();
-    }
+//         targets = dam.ToArray();
+//         return hits.Any();
+//     }
 
-    public override void OnEditorGUI(Vector2 InvokePosition)
-    {
-        Gizmos.DrawWireSphere(position, radius);
-    }
-}
+//     public override void OnEditorGUI(Vector2 InvokePosition)
+//     {
+//         Gizmos.DrawWireSphere(position, radius);
+//     }
+// }
 
 #endregion
