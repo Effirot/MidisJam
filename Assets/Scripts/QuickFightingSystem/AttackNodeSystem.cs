@@ -24,10 +24,9 @@ public class AttackNodeSystem : NodeGraph
         }
     }
 
-    public void Invoke(QuickAttackController Invoker, string AttackName){
-        
+    public IEnumerator<YieldInstruction> Invoke(QuickAttackController Invoker, string AttackName){
+        yield return Invoker.StartCoroutine(((AttackStart)nodes.Find(a=>a is AttackStart)).Start(Invoker));
     }
-
 }
 
 [System.Serializable]
@@ -43,8 +42,27 @@ public sealed class AttackStart : Node{
     public string Name = "Attack";
 
     [SerializeField] 
-    [Output(ShowBackingValue.Never, ConnectionType.Override)]
+    [Output(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Inherited)]
     QueueTransit Enter;
+
+    
+
+    public IEnumerator<YieldInstruction> Start(QuickAttackController Invoker){
+        Enter = new QueueTransit() { 
+            StartNode = this,
+            Index = 0,
+            Origin = Invoker,
+        };
+
+
+
+
+        yield break;
+    }
+
+    void GetNext(){
+
+    } 
 }
 
 #region Object Combine\Separate
@@ -99,10 +117,18 @@ public sealed class DamageTargetsInfo : List<IDamageable>{
 
 public abstract class QueueObject : Node{
 
-    [Input(ShowBackingValue.Never, ConnectionType.Override)] public QueueTransit entry;
-    [Output(ShowBackingValue.Never, ConnectionType.Override)] public QueueTransit exit;
+    [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Inherited)] public QueueTransit entry;
+    [Output(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Inherited)] public QueueTransit exit;
 
     public abstract void OnGUI();
+
+    public virtual QueueObject NextStep(){
+        var port = this.GetOutputPort("exit");
+
+        if(!port.IsConnected) return null;
+
+        return port.node as QueueObject;
+    }
 }
 public class CircleHitBox : QueueObject
 {
@@ -119,10 +145,13 @@ public class CircleHitBox : QueueObject
 
 
 public class Condition : QueueObject{
-    public bool Input;
 
-    [Output(ShowBackingValue.Never, ConnectionType.Override)]
-    public QueueTransit exit2;
+    [Output(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Inherited)]
+    public QueueTransit falseExit;
+    
+    [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Inherited)]
+    [SerializeField]
+    public bool Input;
     
     public override void OnGUI()
     { }
