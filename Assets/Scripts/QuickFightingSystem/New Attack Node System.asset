@@ -73,6 +73,208 @@ MonoBehaviour:
     Index: 0
     StartNode: {fileID: 0}
   Input: 0
+--- !u!114 &-8300297802761915307
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: Circle Hit Box
+  m_EditorClassIdentifier: QuickFightingSystem::CircleHitBox
+  graph: {fileID: 11400000}
+  position: {x: -216, y: 120}
+  ports:
+    keys:
+    - Position
+    - Radius
+    - Damaged
+    - entry
+    - exit
+    values:
+    - _fieldName: Position
+      _node: {fileID: -8300297802761915307}
+      _typeQualifiedName: UnityEngine.Vector2, UnityEngine.CoreModule, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: Radius
+      _node: {fileID: -8300297802761915307}
+      _typeQualifiedName: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: Damaged
+      _node: {fileID: -8300297802761915307}
+      _typeQualifiedName: DamageTargetsInfo, QuickFightingSystem, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: entry
+      _node: {fileID: -8300297802761915307}
+      _typeQualifiedName: QueueTransit, QuickFightingSystem, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections:
+      - fieldName: Enter
+        node: {fileID: 346088470848873091}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 1
+      _dynamic: 0
+    - _fieldName: exit
+      _node: {fileID: -8300297802761915307}
+      _typeQualifiedName: QueueTransit, QuickFightingSystem, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections: []
+      _direction: 1
+      _connectionType: 1
+      _typeConstraint: 1
+      _dynamic: 0
+  entry:
+    Origin: {fileID: 0}
+    Index: 0
+    StartNode: {fileID: 0}
+  exit:
+    Origin: {fileID: 0}
+    Index: 0
+    StartNode: {fileID: 0}
+  Position: {x: 0, y: 0}
+  Radius: 0
+  Damaged:
+    IsHit: 0
+--- !u!114 &-8078540191084354927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: Circle Hit Box
+  m_EditorClassIdentifier: QuickFightingSystem::CircleHitBox
+  graph: {fileID: 11400000}
+  position: {x: -152, y: -152}
+  ports:
+    keys:
+    - Position
+    - Radius
+    - Damaged
+    - entry
+    - exit
+    values:
+    - _fieldName: Position
+      _node: {fileID: -8078540191084354927}
+      _typeQualifiedName: UnityEngine.Vector2, UnityEngine.CoreModule, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: Radius
+      _node: {fileID: -8078540191084354927}
+      _typeQualifiedName: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: Damaged
+      _node: {fileID: -8078540191084354927}
+      _typeQualifiedName: DamageTargetsInfo, QuickFightingSystem, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: entry
+      _node: {fileID: -8078540191084354927}
+      _typeQualifiedName: QueueTransit, QuickFightingSystem, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections:
+      - fieldName: Enter
+        node: {fileID: -4319045642145127917}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 1
+      _dynamic: 0
+    - _fieldName: exit
+      _node: {fileID: -8078540191084354927}
+      _typeQualifiedName: QueueTransit, QuickFightingSystem, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections:
+      - fieldName: entry
+        node: {fileID: 6851352842517543434}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 1
+      _typeConstraint: 1
+      _dynamic: 0
+  entry:
+    Origin: {fileID: 0}
+    Index: 0
+    StartNode: {fileID: 0}
+  exit:
+    Origin: {fileID: 0}
+    Index: 0
+    StartNode: {fileID: 0}
+  Position: {x: 0, y: 0.05}
+  Radius: 0
+  Damaged:
+    IsHit: 0
+--- !u!114 &-4319045642145127917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: Attack Start
+  m_EditorClassIdentifier: QuickFightingSystem::AttackStart
+  graph: {fileID: 11400000}
+  position: {x: -488, y: -152}
+  ports:
+    keys:
+    - Enter
+    values:
+    - _fieldName: Enter
+      _node: {fileID: -4319045642145127917}
+      _typeQualifiedName: QueueTransit, QuickFightingSystem, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections:
+      - fieldName: entry
+        node: {fileID: -8078540191084354927}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 1
+      _typeConstraint: 1
+      _dynamic: 0
+  Name: SLight
+  Enter:
+    Origin: {fileID: 0}
+    Index: 0
+    StartNode: {fileID: 0}
 --- !u!114 &-1968388916697810630
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -121,10 +323,120 @@ MonoBehaviour:
   m_Name: New Attack Node System
   m_EditorClassIdentifier: 
   nodes:
-  - {fileID: -1968388916697810630}
-  - {fileID: 9146138371799799863}
-  - {fileID: -8461194777422549680}
+  - {fileID: -4319045642145127917}
+  - {fileID: 6851352842517543434}
+  - {fileID: 346088470848873091}
+  - {fileID: -8078540191084354927}
+  - {fileID: -8300297802761915307}
   Name: 
+--- !u!114 &346088470848873091
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: Attack Start
+  m_EditorClassIdentifier: QuickFightingSystem::AttackStart
+  graph: {fileID: 11400000}
+  position: {x: -488, y: 40}
+  ports:
+    keys:
+    - Enter
+    values:
+    - _fieldName: Enter
+      _node: {fileID: 346088470848873091}
+      _typeQualifiedName: QueueTransit, QuickFightingSystem, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections:
+      - fieldName: entry
+        node: {fileID: -8300297802761915307}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 1
+      _typeConstraint: 1
+      _dynamic: 0
+  Name: 
+  Enter:
+    Origin: {fileID: 0}
+    Index: 0
+    StartNode: {fileID: 0}
+--- !u!114 &6851352842517543434
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: Condition
+  m_EditorClassIdentifier: QuickFightingSystem::Condition
+  graph: {fileID: 11400000}
+  position: {x: 152, y: -152}
+  ports:
+    keys:
+    - falseExit
+    - Input
+    - entry
+    - exit
+    values:
+    - _fieldName: falseExit
+      _node: {fileID: 6851352842517543434}
+      _typeQualifiedName: QueueTransit, QuickFightingSystem, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections: []
+      _direction: 1
+      _connectionType: 1
+      _typeConstraint: 1
+      _dynamic: 0
+    - _fieldName: Input
+      _node: {fileID: 6851352842517543434}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 1
+      _dynamic: 0
+    - _fieldName: entry
+      _node: {fileID: 6851352842517543434}
+      _typeQualifiedName: QueueTransit, QuickFightingSystem, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections:
+      - fieldName: exit
+        node: {fileID: -8078540191084354927}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 1
+      _dynamic: 0
+    - _fieldName: exit
+      _node: {fileID: 6851352842517543434}
+      _typeQualifiedName: QueueTransit, QuickFightingSystem, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections: []
+      _direction: 1
+      _connectionType: 1
+      _typeConstraint: 1
+      _dynamic: 0
+  entry:
+    Origin: {fileID: 0}
+    Index: 0
+    StartNode: {fileID: 0}
+  exit:
+    Origin: {fileID: 0}
+    Index: 0
+    StartNode: {fileID: 0}
+  falseExit:
+    Origin: {fileID: 0}
+    Index: 0
+    StartNode: {fileID: 0}
+  Input: 0
 --- !u!114 &9146138371799799863
 MonoBehaviour:
   m_ObjectHideFlags: 0
